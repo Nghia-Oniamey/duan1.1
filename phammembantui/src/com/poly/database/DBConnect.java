@@ -1,47 +1,51 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.poly.database;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- *
- * @author HangNT169
- */
 public class DBConnect {
 
-    public static final String HOSTNAME = "localhost";
-    public static final String PORT = "1433";
-    public static final String DBNAME = "DB_NHOM_3_hungbbb";
-    public static final String USERNAME = "sa";
-    public static final String PASSWORD = "0866625229";
+    private static final String USERNAME = "sa";
+    private static final String PASSWORD = "123456";
+    private static final String SERVER = "localhost";
+    private static final String PORT = "1433";
+    private static final String DATABASE_NAME = "DB_phanmembantui";
+    private static final boolean USING_SSL = false;
 
-    /**
-     * Get connection to MSSQL Server
-     *
-     * @return Connection
-     */
-    public static Connection getConnection() {
+    private static String CONNECT_STRING;
 
-        // Create a variable for the connection string.
-        String connectionUrl = "jdbc:sqlserver://" + HOSTNAME + ":" + PORT + ";"
-                + "databaseName=" + DBNAME + ";encrypt=true;trustservercertificate=true";
-
+    static {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            return DriverManager.getConnection(connectionUrl, USERNAME, PASSWORD);
-        } // Handle any errors that may have occurred.
-        catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace(System.out);
+
+            StringBuilder connectStringBuilder = new StringBuilder();
+            connectStringBuilder.append("jdbc:sqlserver://")
+                    .append(SERVER).append(":").append(PORT).append(";")
+                    .append("databaseName=").append(DATABASE_NAME).append(";")
+                    .append("user=").append(USERNAME).append(";")
+                    .append("password=").append(PASSWORD).append(";");
+            if (USING_SSL) {
+                connectStringBuilder.append("encrypt=true;trustServerCertificate=true;");
+            }
+            CONNECT_STRING = connectStringBuilder.toString();
+            System.out.println("Connect String có dạng: " + CONNECT_STRING);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DBConnect.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
     }
 
-    public static void main(String[] args) {
-        System.out.println(getConnection());
+    public static Connection getConnection() throws Exception {
+        return DriverManager.getConnection(CONNECT_STRING);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Connection conn = getConnection();
+        DatabaseMetaData dbmt = conn.getMetaData();
+        System.out.println(dbmt.getDriverName());
+        System.out.println(dbmt.getDatabaseProductName());
+        System.out.println(dbmt.getDatabaseProductVersion());
     }
 }

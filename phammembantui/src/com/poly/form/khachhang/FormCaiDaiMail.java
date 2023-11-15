@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Properties;
 import javax.swing.table.DefaultTableModel;
 import java.util.Properties;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+//import javax.mail.Authenticator;
+//import javax.mail.Message;
+//import javax.mail.MessagingException;
+//import javax.mail.PasswordAuthentication;
+//import javax.mail.Session;
+//import javax.mail.Transport;
+//import javax.mail.internet.InternetAddress;
+//import javax.mail.internet.MimeMessage;
 import raven.toast.Notifications;
 import java.util.Date;
 
@@ -81,24 +81,24 @@ public class FormCaiDaiMail extends javax.swing.JPanel {
 
             String accountName = txtUser.getText();
             String password = txtPass.getText();
-
-            Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(accountName, password);
-                }
-            });
-
-            for (KhachHang kh : list) {
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(accountName));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(kh.getEmail()));
-                message.setSubject(txtSubJect.getText());
-                message.setText(getNoiDungEmail());
-                Transport.send(message);
-
-                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER,
-                            "Đã gửi mail thành công đến "+kh.getEmail());
-            }
+//
+//            Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+//                protected PasswordAuthentication getPasswordAuthentication() {
+//                    return new PasswordAuthentication(accountName, password);
+//                }
+//            });
+//
+//            for (KhachHang kh : list) {
+//                Message message = new MimeMessage(session);
+//                message.setFrom(new InternetAddress(accountName));
+//                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(kh.getEmail()));
+//                message.setSubject(txtSubJect.getText());
+//                message.setText(getNoiDungEmail());
+//                Transport.send(message);
+//
+//                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER,
+//                            "Đã gửi mail thành công đến "+kh.getEmail());
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

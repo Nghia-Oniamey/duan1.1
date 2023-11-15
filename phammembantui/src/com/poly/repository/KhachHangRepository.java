@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.poly.repository;
 
 import com.poly.database.DBConnect;
@@ -186,8 +182,6 @@ public class KhachHangRepository {
         }
         return null;
     }
-    
-
 
     public List<KhachHang> searchByNameAndGioiTinh(String name, int gioiTinh) {
         List<KhachHang> list = new ArrayList<>();
@@ -293,7 +287,7 @@ public class KhachHangRepository {
             while (rs.next()) {
                 KhachHang kh = new KhachHang();
                 kh.setId(rs.getInt("id"));
-                  kh.setMa(rs.getString("ma"));
+                kh.setMa(rs.getString("ma"));
                 kh.setHoTen(rs.getString("ho_ten"));
                 kh.setGioiTinh(rs.getBoolean("gioi_tinh"));
                 kh.setSdt(rs.getString("sdt"));
@@ -326,8 +320,8 @@ public class KhachHangRepository {
 
         return check > 0;
     }
-    
-     public boolean updateAllIsDeleteKhachHang() {
+
+    public boolean updateAllIsDeleteKhachHang() {
         int check = 0;
         String sql = "UPDATE khach_hang set is_delete = ? where is_delete = 1";
 
@@ -378,7 +372,7 @@ public class KhachHangRepository {
         return hoaDonList;
     }
 
-    public int getTongSoTienDaTra(int idKhachHang) {
+    public int getTongSoTienDaTra(int idKhachHang) throws Exception {
         int tongSoTienDaTra = 0;
 
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement("SELECT SUM(TongTienHoaDon) FROM HoaDon WHERE IDKhachHang = ?")) {
@@ -396,7 +390,7 @@ public class KhachHangRepository {
         return tongSoTienDaTra;
     }
 
-    public void updateCapBacupdateCapBacTheoTien(int idKhachHang) {
+    public void updateCapBacupdateCapBacTheoTien(int idKhachHang) throws Exception {
         int tongSoTienDaTra = getTongSoTienDaTra(idKhachHang);
 
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement("UPDATE khach_hang SET cap_bac = ? WHERE id = ?")) {

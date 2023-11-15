@@ -34,7 +34,7 @@ public class Menu extends JPanel {
         {"Quản lý Đổi hàng","Trang chủ", "Trang con 1", "Trang con 2"},
         {"Quản lý nhân viên","Trang chủ", "Trang con 1", "Trang con 2"},
         {"Quản lý khách hàng","Trang chủ", "Khách hàng đã xóa", "Gửi gmail khách hàng"},
-        {"Quản lý khuyến mãi","Trang chủ","Trang con 1", "Trang con 2"},
+        {"Quản lý khuyến mại","Trang chủ","Trang con 1", "Trang con 2", "Khuyến mại theo sản phẩm"},
         {"Quản lý giao hàng","Trang chủ", "Trang con 1","Trang con 2"},
         {"Logout"}
     };

@@ -25,6 +25,7 @@ import com.poly.form.giaohang.FormQuanLyGiaoHangItem1;
 import com.poly.form.giaohang.FormQuanLyGiaoHangItem2;
 import com.poly.form.khachhang.FormQuanLyKhachHang;
 import com.poly.form.khuyenmai.FormQuanLyKhuyenMai;
+import com.poly.form.khuyenmai.FormQuanLyKhuyenMaiTheoSanPham;
 import com.poly.form.nhanvien.FormQuanLyNhanVien;
 import com.poly.form.hoadon.FormQuanLyHoaDon;
 import com.poly.form.hoadon.FormQuanLyHoaDonItem1;
@@ -149,6 +150,8 @@ public class MainForm extends JLayeredPane {
                     Application.showForm(new FormQuanLyKhuyenMaiItem1());
                 } else if (subIndex == 3) {
                     Application.showForm(new FormQuanLyKhuyenMaiItem2());
+                } else if(subIndex == 4){
+                    Application.showForm(new FormQuanLyKhuyenMaiTheoSanPham());
                 }
             } else if (index == 7) {
                 if (subIndex == 1) {

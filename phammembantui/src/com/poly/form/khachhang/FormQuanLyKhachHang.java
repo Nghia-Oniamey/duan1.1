@@ -7,7 +7,7 @@ import com.poly.form.sanpham.FormQuanLySanPham;
 import com.poly.menu.Menu;
 import com.poly.repository.KhachHangRepository;
 import com.poly.service.KhachHangService;
-import static com.poly.util.MaRandom.renderMa;
+import static com.poly.utils.MaRandom.renderMa;
 import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.util.ArrayList;
