@@ -13,7 +13,7 @@ import com.poly.entity.khuyenmai.KhuyenMaiTheoSanPhamRequest;
 public class KhuyenMaiTheoSanPhamReposirory {
 
     public List<KhuyenMaiTheoSanPham> getAllDataKhuyenMai() throws Exception {
-        String query = "SELECT * FROM khuyen_mai";
+        String query = "SELECT * FROM khuyen_mai ORDER BY thoi_gian_tao DESC ";
         List<KhuyenMaiTheoSanPham> listKhuyenMai = new ArrayList<>();
 
         try (Connection conn = DBConnect.getConnection(); PreparedStatement ps
@@ -40,45 +40,57 @@ public class KhuyenMaiTheoSanPhamReposirory {
         return listKhuyenMai;
     }
 
-//    public ArrayList<KhuyenMaiTheoSanPham> getAllHoaDon() {
-//        ArrayList<KhuyenMaiTheoSanPham> list = new ArrayList<>();
-//            String query = "SELECT TOP 6 * FROM khuyen_mai where MAHD not in (SELECT TOP " + "(Trang * 6 - 6)"
-//                    + "ma_khuyen_mai FROM khuyen_mai ORDER BY  DESC) AND (TRANGTHAI=1 OR TRANGTHAI=2) ORDER BY NGAYTAO DESC ";
-////        ResultSet rs = JDBCHelper.excuteQuery(sql);
-////        try {
-////            while (rs.next()) {
-////                NhanVien nv1 = nv.getNVByID(rs.getString(3));
-////                KhachHang kh1 = kh.getKhachHangByidkmd(rs.getString(4));
-////                KhuyenMai km1 = km.getKMByID(rs.getString(7));
-////
-////                list.add(new HoaDonViewModel(rs.getString(1), rs.getString(2), nv1, kh1, rs.getDate(5), rs.getBigDecimal(6), km1, rs.getString(8), rs.getDate(10), rs.getDate(9), rs.getInt(11),rs.getInt(12)));
-////            }
-////        } catch (SQLException ex) {
-////            ex.printStackTrace();
-////        }
-//        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps
-//                = conn.prepareStatement(query)) {
-//            ps.execute();
-//            ResultSet rs = ps.getResultSet();
-//            while (rs.next()) {
-//                Long id = rs.getLong("id");
-//                String ten = rs.getString("ten_khuyen_mai");
-//                String ma = rs.getString("ma_khuyen_mai");
-//                Integer giaGiam = rs.getInt("phan_tram_giam_gia");
-//                Long thoiGianBatDau = rs.getLong("thoi_gian_bat_dau");
-//                Long thoiGianKetThuc = rs.getLong("thoi_gian_ket_thuc");
-//                Long thoiGianSua = rs.getLong("thoi_gian_sua");
-//                Long thoiGianTao = rs.getLong("thoi_gian_tao");
-//                Boolean trangThai = rs.getBoolean("trang_thai");
-//                list.add(new KhuyenMaiTheoSanPham(id, ma, ten, giaGiam,
-//                        thoiGianBatDau, thoiGianKetThuc,
-//                        thoiGianTao, thoiGianSua, trangThai));
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return list;
-//    }
+    public ArrayList<KhuyenMaiTheoSanPham> getPhanTrang(int trang) {
+        ArrayList<KhuyenMaiTheoSanPham> list = new ArrayList<>();
+        String query = "SELECT TOP 6 * FROM khuyen_mai where MAHD not in (SELECT TOP " + "(? * 6 - 6)"
+                + "ma_khuyen_mai FROM khuyen_mai ORDER BY  DESC) AND (TRANGTHAI=1 OR TRANGTHAI=2) ORDER BY NGAYTAO DESC ";
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps
+                = conn.prepareStatement(query)) {
+            ps.setInt(1, trang);
+            ps.execute();
+            ResultSet rs = ps.getResultSet();
+            while (rs.next()) {
+                Long id = rs.getLong("id");
+                String ten = rs.getString("ten_khuyen_mai");
+                String ma = rs.getString("ma_khuyen_mai");
+                Integer giaGiam = rs.getInt("phan_tram_giam_gia");
+                Long thoiGianBatDau = rs.getLong("thoi_gian_bat_dau");
+                Long thoiGianKetThuc = rs.getLong("thoi_gian_ket_thuc");
+                Long thoiGianSua = rs.getLong("thoi_gian_sua");
+                Long thoiGianTao = rs.getLong("thoi_gian_tao");
+                Boolean trangThai = rs.getBoolean("trang_thai");
+                list.add(new KhuyenMaiTheoSanPham(id, ma, ten, giaGiam,
+                        thoiGianBatDau, thoiGianKetThuc,
+                        thoiGianTao, thoiGianSua, trangThai));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Long countAllHD() throws Exception{
+        String query = "SELECT count(*) From khuyen_mai as trang";
+
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.execute();
+
+            ResultSet rs = ps.getResultSet();
+
+            Long count = null;
+
+            while (rs.next()) {
+                count = rs.getLong("trang");
+            }
+
+            return count;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void themKhuyenMai(KhuyenMaiTheoSanPham khuyenMaiTheoSanPham)
             throws Exception {
         String query = "INSERT INTO khuyen_mai (ten_khuyen_mai ,ma_khuyen_mai,"
