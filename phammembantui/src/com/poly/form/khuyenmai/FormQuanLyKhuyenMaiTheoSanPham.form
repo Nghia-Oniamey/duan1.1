@@ -31,7 +31,7 @@
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="455" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="445" max="-2" attributes="0"/>
               <Component id="lb" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -57,7 +57,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; khuy&#x1ebf;n m&#x1ea1;i"/>
+        <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; &#x111;&#x1ee3;t khuy&#x1ebf;n m&#x1ea1;i"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
@@ -383,11 +383,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Th&#xea;m"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnThemActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnSua">
           <Properties>
             <Property name="text" type="java.lang.String" value="S&#x1eed;a"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSuaActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnXoaMem">
           <Properties>
@@ -506,48 +512,32 @@
                               <Component id="rdNgungHoatDongTimKiem" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel21" alignment="3" max="32767" attributes="0"/>
                           </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace pref="21" max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="jslGiaTriTimKiem" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel19" alignment="1" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jlbGiaTriTimKiem" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
-                                          <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="btnTimKiem" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="btnDonFormTimKiem" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="jLabel22" min="-2" pref="21" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <EmptySpace pref="18" max="32767" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="jdcNgayBatDauTimKiem" pref="28" max="32767" attributes="0"/>
                               <Component id="jlbNgayBatDauTimKiem" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="jlbNgayKetThucTimKiem" min="-2" pref="21" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                                  <Component id="jdcNgayKetThucTimKiem" min="-2" pref="28" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jslGiaTriTimKiem" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel19" alignment="1" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jlbGiaTriTimKiem" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                          <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnTimKiem" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnDonFormTimKiem" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel22" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
+                          <Component id="jlbNgayKetThucTimKiem" alignment="3" min="-2" pref="21" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jdcNgayKetThucTimKiem" min="-2" pref="28" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                   <Component id="jScrollPane1" min="-2" pref="177" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -573,8 +563,8 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="6" rowCount="4">
-                    <Column editable="true" title="T&#xea;n" type="java.lang.Object"/>
                     <Column editable="true" title="M&#xe3;" type="java.lang.Object"/>
+                    <Column editable="true" title="T&#xea;n" type="java.lang.Object"/>
                     <Column editable="true" title="Gi&#xe1;" type="java.lang.Object"/>
                     <Column editable="true" title="Ng&#xe0;y b&#x1eaf;t &#x111;&#x1ea7;u" type="java.lang.Object"/>
                     <Column editable="true" title="Ng&#xe0;y k&#x1ebf;t th&#xfa;c" type="java.lang.Object"/>
@@ -711,6 +701,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="T&#xec;m ki&#x1ebf;m"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTimKiemActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnDonFormTimKiem">
           <Properties>

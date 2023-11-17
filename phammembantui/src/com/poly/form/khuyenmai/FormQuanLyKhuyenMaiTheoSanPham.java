@@ -2,7 +2,9 @@ package com.poly.form.khuyenmai;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.poly.entity.khuyenmai.KhuyenMaiTheoSanPham;
+import com.poly.entity.khuyenmai.KhuyenMaiTheoSanPhamRequest;
 import com.poly.repository.KhuyenMaiTheoSanPhamReposirory;
+import com.poly.utils.randomcodekhuyenmai.RandomCodeGenerator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,19 +16,19 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
-
+    
     private List<KhuyenMaiTheoSanPham> listView = new ArrayList<>();
-
+    
     private DefaultTableModel defaultTableModel;
-
+    
     private KhuyenMaiTheoSanPhamReposirory repo = new KhuyenMaiTheoSanPhamReposirory();
-
+    
     public FormQuanLyKhuyenMaiTheoSanPham() {
         initComponents();
-
+        
         lb.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:$h1.font");
-
+        
         try {
             this.init();
         } catch (Exception ex) {
@@ -34,27 +36,27 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             Logger.getLogger(FormQuanLyKhuyenMaiTheoSanPham.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public void init() throws Exception {
         this.listView = this.repo.getAllDataKhuyenMai();
-
+        
         this.defaultTableModel = (DefaultTableModel) tblDanhSachKhuyenMai.getModel();
-
+        
         this.fillTable(listView);
 
 //        this.
     }
-
+    
     public void fillTable(List<KhuyenMaiTheoSanPham> list) {
         this.defaultTableModel.setRowCount(0);
         for (KhuyenMaiTheoSanPham khuyenMaiTheoSanPham : list) {
             this.defaultTableModel.addRow(khuyenMaiTheoSanPham.toRowTable());
         }
     }
-
+    
     public KhuyenMaiTheoSanPham findKhuyenMaiByMa(String ma, List<KhuyenMaiTheoSanPham> list) {
         KhuyenMaiTheoSanPham khuyenMaiTheoSanPham1 = null;
-
+        
         for (KhuyenMaiTheoSanPham khuyenMaiTheoSanPham : list) {
             if (khuyenMaiTheoSanPham.getMa().equals(ma)) {
                 return khuyenMaiTheoSanPham;// Nếu mã khớp, thêm vào danh sách kết quả
@@ -62,7 +64,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         }
         return khuyenMaiTheoSanPham1;
     }
-
+    
     public void fillTableToForm(String ma, List<KhuyenMaiTheoSanPham> list) {
         KhuyenMaiTheoSanPham khuyenMaiTheoSanPham = findKhuyenMaiByMa(ma, list);
         this.txtTen.setText(khuyenMaiTheoSanPham.getTen());
@@ -73,46 +75,107 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         } else {
             this.rdNgungHoatDong.setSelected(true);
         }
-
+        
         Date ngayBatDauConvert = new Date(khuyenMaiTheoSanPham.getNgayBatDau() * 1000);
         Date ngayKetThucConvert = new Date(khuyenMaiTheoSanPham.getNgayKetThuc() * 1000);
         Date ngayTaoConvert = new Date(khuyenMaiTheoSanPham.getThoiGianTao() * 1000);
         Date ngaySuaConvert = new Date(khuyenMaiTheoSanPham.getThoiGianSua() * 1000);
-
+        
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-
+        
         String ngayBatDauConverted = sdf.format(ngayBatDauConvert);
         String ngayKetThucConverted = sdf.format(ngayKetThucConvert);
         String ngayTaoConverted = sdf.format(ngayTaoConvert);
         String ngaySuaConverted = sdf.format(ngaySuaConvert);
-
+        
         Calendar calNgayBatDau = Calendar.getInstance();
         calNgayBatDau.setTime(ngayBatDauConvert);
-
+        
         Calendar calNgayKetThuc = Calendar.getInstance();
         calNgayKetThuc.setTime(ngayKetThucConvert);
-
+        
         jdcNgayBatDau.setCalendar(calNgayBatDau);
         jdcNgayKetThuc.setCalendar(calNgayKetThuc);
-
+        
         this.jlbNgayBatDau.setText(ngayBatDauConverted);
         this.jlbNgayKetThuc.setText(ngayKetThucConverted);
         this.jlbNgaySua.setText(ngaySuaConverted);
         this.jlbNgayTao.setText(ngaySuaConverted);
     }
-
-    public KhuyenMaiTheoSanPham readForm() {
+    
+    public KhuyenMaiTheoSanPham readForm(String ma) {
         KhuyenMaiTheoSanPham khuyenMaiTheoSanPham = null;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date()); // Đặt thời gian cho ngày hiện tại
-//        Long ngayTaoVaSua = ngayFake.getTime().getTime() / 1000;
-
-        long currentTime = cal.getTimeInMillis() / 1000;
-//        return new KhuyenMaiTheoSanPham(currentTime, TOOL_TIP_TEXT_KEY, TOOL_TIP_TEXT_KEY, WIDTH, currentTime, currentTime, currentTime, currentTime, Boolean.TRUE)
-
-        return khuyenMaiTheoSanPham;
+        
+        try {
+            String ten = this.txtTen.getText();
+            Integer giaTri = Integer.valueOf(this.jslGiaTri.getValue());
+            
+            Calendar ngayKetThucCal = jdcNgayBatDau.getCalendar();
+            Calendar ngayBatDauCal = jdcNgayKetThuc.getCalendar();
+            
+            Long ngayBatDau = ngayBatDauCal.getTimeInMillis() / 1000;
+            Long ngayKetThuc = ngayKetThucCal.getTimeInMillis() / 1000;
+            
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date()); // Đặt thời gian cho ngày hiện tại
+            Long ngayTaoVaSua = cal.getTime().getTime() / 1000;
+            
+            Boolean trangThai;
+            if (this.rdHoatDong.isSelected()) {
+                trangThai = true;
+            } else {
+                trangThai = false;
+            }
+            
+            return new KhuyenMaiTheoSanPham(null, ma, ten, giaTri, ngayBatDau, ngayKetThuc, ngayTaoVaSua, ngayTaoVaSua, trangThai);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Đọc file lỗi");
+            e.printStackTrace();
+            return khuyenMaiTheoSanPham;
+        }
     }
-
+    
+    public KhuyenMaiTheoSanPhamRequest readFormSearch() {
+        KhuyenMaiTheoSanPhamRequest khuyenMaiTheoSanPham = null;
+        
+        try {
+            String input = this.txtTimKiemMaOrTen.getText();
+            Integer giaTri = Integer.valueOf(this.jslGiaTriTimKiem.getValue());
+            
+            Calendar ngayKetThucCal = jdcNgayBatDauTimKiem.getCalendar();
+            Calendar ngayBatDauCal = jdcNgayKetThucTimKiem.getCalendar();
+            
+            Long ngayBatDau = null;
+            Long ngayKetThuc = null;
+            
+            if (ngayBatDauCal != null) {
+                ngayBatDau = ngayBatDauCal.getTimeInMillis() / 1000;
+                
+            }
+            if (ngayKetThucCal != null) {
+                ngayKetThuc = ngayKetThucCal.getTimeInMillis() / 1000;
+            }
+            
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date()); // Đặt thời gian cho ngày hiện tại
+            Long ngayTaoVaSua = cal.getTime().getTime() / 1000;
+            
+            Boolean trangThai;
+            if (this.rdHoatDongTimKiem.isSelected()) {
+                trangThai = true;
+            } else if (this.rdTatCaTimKiem.isSelected()) {
+                trangThai = null;
+            } else {
+                trangThai = false;
+            }
+            
+            return new KhuyenMaiTheoSanPhamRequest(input, giaTri, ngayBatDau, ngayKetThuc, trangThai, ngayTaoVaSua);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Đọc file lỗi");
+            e.printStackTrace();
+            return khuyenMaiTheoSanPham;
+        }
+    }
 //    countAllHD();
 //        if (count % 6 == 0) {
 //            soTrang = count / 6;
@@ -122,6 +185,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
 //
 //        lblpage.setText("1/" + soTrang);
 //        loadTBHoaDonAll(1);
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -182,7 +246,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         btnDonFormTimKiem = new javax.swing.JButton();
 
         lb.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lb.setText("Quản lý khuyến mại");
+        lb.setText("Quản lý đợt khuyến mại");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Thông tin khuyến mại"));
 
@@ -249,8 +313,18 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         jLabel14.setText("Ngày tạo:");
 
         btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
         btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaActionPerformed(evt);
+            }
+        });
 
         btnXoaMem.setText("Xóa mềm");
         btnXoaMem.addActionListener(new java.awt.event.ActionListener() {
@@ -406,7 +480,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Tên", "Mã", "Giá", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"
+                "Mã", "Tên", "Giá", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"
             }
         ));
         tblDanhSachKhuyenMai.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -475,6 +549,11 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         jLabel21.setText("Ngày bắt đầu:");
 
         btnTimKiem.setText("Tìm kiếm");
+        btnTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimKiemActionPerformed(evt);
+            }
+        });
 
         btnDonFormTimKiem.setText("Dọn Form");
         btnDonFormTimKiem.addActionListener(new java.awt.event.ActionListener() {
@@ -558,35 +637,25 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
                             .addComponent(rdHoatDongTimKiem)
                             .addComponent(rdNgungHoatDongTimKiem)
                             .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jslGiaTriTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jlbGiaTriTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel17)
-                                        .addComponent(btnTimKiem)
-                                        .addComponent(btnDonFormTimKiem)))
-                                .addGap(21, 21, 21))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jdcNgayBatDauTimKiem, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                             .addComponent(jlbNgayBatDauTimKiem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jlbNgayKetThucTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addGap(11, 11, 11)
-                                .addComponent(jdcNgayKetThucTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jslGiaTriTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jlbGiaTriTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel17)
+                        .addComponent(btnTimKiem)
+                        .addComponent(btnDonFormTimKiem)
+                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jlbNgayKetThucTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jdcNgayKetThucTimKiem, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(19, 19, 19)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -608,7 +677,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(455, 455, 455)
+                .addGap(445, 445, 445)
                 .addComponent(lb)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -626,7 +695,27 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnXoaMemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaMemActionPerformed
-        // TODO add your handling code here:
+        int choice = JOptionPane.showConfirmDialog(this, "Bạn có xóa không", "Thông báo", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            String ma = this.jlbMa.getText();
+            Boolean trangThai;
+            if (rdHoatDong.isSelected()) {
+                trangThai = true;
+            } else {
+                trangThai = false;
+            }
+            try {
+                this.repo.capNhatTrangThaiKhuyenMaiBangMa(ma, trangThai);
+                this.listView = this.repo.getAllDataKhuyenMai();
+                this.fillTable(this.listView);
+                this.fillTableToForm(ma, this.listView);
+                JOptionPane.showMessageDialog(this, "cập nhật thành công");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "cập nhật thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Đã hủy cập nhật");
+        }
     }//GEN-LAST:event_btnXoaMemActionPerformed
 
     private void btnDonFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDonFormActionPerformed
@@ -652,13 +741,20 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
 
     private void btnDonFormTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDonFormTimKiemActionPerformed
         this.jlbNgayBatDauTimKiem.setText("");
-        this.jlbNgayKetThuc.setText("");
+        this.jlbNgayKetThucTimKiem.setText("");
         this.jdcNgayBatDauTimKiem.setCalendar(null);
         this.jdcNgayKetThucTimKiem.setCalendar(null);
         this.txtTimKiemMaOrTen.setText("");
+        this.rdTatCaTimKiem.setSelected(true);
         this.jslGiaTriTimKiem.setValue(50);
         this.jdcNgayBatDauTimKiem.setCalendar(null);
         this.jdcNgayKetThucTimKiem.setCalendar(null);
+        try {
+            this.listView = this.repo.getAllDataKhuyenMai();
+        } catch (Exception ex) {
+            Logger.getLogger(FormQuanLyKhuyenMaiTheoSanPham.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        fillTable(listView);
     }//GEN-LAST:event_btnDonFormTimKiemActionPerformed
 
     private void tblDanhSachKhuyenMaiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDanhSachKhuyenMaiMouseClicked
@@ -723,6 +819,56 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jdcNgayKetThucTimKiemPropertyChange
 
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        int choice = JOptionPane.showConfirmDialog(this, "Bạn có muốn thêm", "Thông báo", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            String ma = RandomCodeGenerator.generateCode(4);
+            try {
+                this.repo.themKhuyenMai(readForm(ma));
+                this.listView = this.repo.getAllDataKhuyenMai();
+                this.fillTable(listView);
+                this.fillTableToForm(ma, listView);
+                JOptionPane.showMessageDialog(this, "Thêm Thành công");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Đã hủy thêm");
+        }
+    }//GEN-LAST:event_btnThemActionPerformed
+
+    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
+        int choice = JOptionPane.showConfirmDialog(this, "Bạn có sửa không", "Thông báo", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            String ma = this.jlbMa.getText();
+            try {
+                this.repo.suaKhuyenMai(readForm(ma));
+                this.listView = this.repo.getAllDataKhuyenMai();
+                this.fillTable(this.listView);
+                this.fillTableToForm(ma, this.listView);
+                JOptionPane.showMessageDialog(this, "Sửa thành công");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Sửa thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Đã hủy sửa");
+        }
+    }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimKiemActionPerformed
+        int choice = JOptionPane.showConfirmDialog(this, "Bạn muốn tìm không", "Thông báo", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                this.listView = this.repo.timKiemTheoNhieuTruong(readFormSearch());
+                this.fillTable(this.listView);
+                JOptionPane.showMessageDialog(this, "tìm thành công");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "tìm thất bại");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Đã hủy tìm");
+        }
+    }//GEN-LAST:event_btnTimKiemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDonForm;

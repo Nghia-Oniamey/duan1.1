@@ -2,9 +2,7 @@ package com.poly.entity.khuyenmai;
 
 public class KhuyenMaiTheoSanPhamRequest {
 
-    private String ma;
-
-    private String ten;
+    private String input;
 
     private Integer giaTri;
 
@@ -19,9 +17,8 @@ public class KhuyenMaiTheoSanPhamRequest {
     public KhuyenMaiTheoSanPhamRequest() {
     }
 
-    public KhuyenMaiTheoSanPhamRequest(String ma, String ten, Integer giaTri, Long ngayBatDau, Long ngayKetThuc, Boolean trangThai, Long thoiDiemHienTai) {
-        this.ma = ma;
-        this.ten = ten;
+    public KhuyenMaiTheoSanPhamRequest(String input, Integer giaTri, Long ngayBatDau, Long ngayKetThuc, Boolean trangThai, Long thoiDiemHienTai) {
+        this.input = input;
         this.giaTri = giaTri;
         this.ngayBatDau = ngayBatDau;
         this.ngayKetThuc = ngayKetThuc;
@@ -29,20 +26,12 @@ public class KhuyenMaiTheoSanPhamRequest {
         this.thoiDiemHienTai = thoiDiemHienTai;
     }
 
-    public String getMa() {
-        return ma;
+    public String getInput() {
+        return input;
     }
 
-    public void setMa(String ma) {
-        this.ma = ma;
-    }
-
-    public String getTen() {
-        return ten;
-    }
-
-    public void setTen(String ten) {
-        this.ten = ten;
+    public void setInput(String input) {
+        this.input = input;
     }
 
     public Integer getGiaTri() {
