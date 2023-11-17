@@ -73,11 +73,11 @@ public class KhachHangService {
         return khachHangRepository.getHoaDonByIdKhachHang(idKhachHang);
     }
 
-    public int getTongSoTienDaTra(int idKhachHang) {
+    public int getTongSoTienDaTra(int idKhachHang) throws Exception {
         return khachHangRepository.getTongSoTienDaTra(idKhachHang);
     }
 
-    public void updateCapBacTheoTien(int idKhachHang) {
+    public void updateCapBacTheoTien(int idKhachHang) throws Exception {
         khachHangRepository.updateCapBacupdateCapBacTheoTien(idKhachHang);
     }
 

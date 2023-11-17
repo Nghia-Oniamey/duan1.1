@@ -5,6 +5,7 @@ import com.poly.entity.khuyenmai.KhuyenMaiTheoSanPham;
 import com.poly.entity.khuyenmai.KhuyenMaiTheoSanPhamRequest;
 import com.poly.repository.KhuyenMaiTheoSanPhamReposirory;
 import com.poly.utils.randomcodekhuyenmai.RandomCodeGenerator;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,19 +17,22 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
-    
+
     private List<KhuyenMaiTheoSanPham> listView = new ArrayList<>();
-    
+
     private DefaultTableModel defaultTableModel;
-    
+
     private KhuyenMaiTheoSanPhamReposirory repo = new KhuyenMaiTheoSanPhamReposirory();
-    
+
+    private int currentPage = 1;
+    private final int pageSize = 10;
+
     public FormQuanLyKhuyenMaiTheoSanPham() {
         initComponents();
-        
+
         lb.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:$h1.font");
-        
+
         try {
             this.init();
         } catch (Exception ex) {
@@ -36,27 +40,26 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             Logger.getLogger(FormQuanLyKhuyenMaiTheoSanPham.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void init() throws Exception {
-        this.listView = this.repo.getAllDataKhuyenMai();
-        
+        this.listView = this.repo.getData(currentPage);
+
         this.defaultTableModel = (DefaultTableModel) tblDanhSachKhuyenMai.getModel();
-        
+
         this.fillTable(listView);
 
-//        this.
     }
-    
+
     public void fillTable(List<KhuyenMaiTheoSanPham> list) {
         this.defaultTableModel.setRowCount(0);
         for (KhuyenMaiTheoSanPham khuyenMaiTheoSanPham : list) {
             this.defaultTableModel.addRow(khuyenMaiTheoSanPham.toRowTable());
         }
     }
-    
+
     public KhuyenMaiTheoSanPham findKhuyenMaiByMa(String ma, List<KhuyenMaiTheoSanPham> list) {
         KhuyenMaiTheoSanPham khuyenMaiTheoSanPham1 = null;
-        
+
         for (KhuyenMaiTheoSanPham khuyenMaiTheoSanPham : list) {
             if (khuyenMaiTheoSanPham.getMa().equals(ma)) {
                 return khuyenMaiTheoSanPham;// Nếu mã khớp, thêm vào danh sách kết quả
@@ -64,7 +67,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         }
         return khuyenMaiTheoSanPham1;
     }
-    
+
     public void fillTableToForm(String ma, List<KhuyenMaiTheoSanPham> list) {
         KhuyenMaiTheoSanPham khuyenMaiTheoSanPham = findKhuyenMaiByMa(ma, list);
         this.txtTen.setText(khuyenMaiTheoSanPham.getTen());
@@ -75,58 +78,58 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         } else {
             this.rdNgungHoatDong.setSelected(true);
         }
-        
+
         Date ngayBatDauConvert = new Date(khuyenMaiTheoSanPham.getNgayBatDau() * 1000);
         Date ngayKetThucConvert = new Date(khuyenMaiTheoSanPham.getNgayKetThuc() * 1000);
         Date ngayTaoConvert = new Date(khuyenMaiTheoSanPham.getThoiGianTao() * 1000);
         Date ngaySuaConvert = new Date(khuyenMaiTheoSanPham.getThoiGianSua() * 1000);
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-        
+
         String ngayBatDauConverted = sdf.format(ngayBatDauConvert);
         String ngayKetThucConverted = sdf.format(ngayKetThucConvert);
         String ngayTaoConverted = sdf.format(ngayTaoConvert);
         String ngaySuaConverted = sdf.format(ngaySuaConvert);
-        
+
         Calendar calNgayBatDau = Calendar.getInstance();
         calNgayBatDau.setTime(ngayBatDauConvert);
-        
+
         Calendar calNgayKetThuc = Calendar.getInstance();
         calNgayKetThuc.setTime(ngayKetThucConvert);
-        
+
         jdcNgayBatDau.setCalendar(calNgayBatDau);
         jdcNgayKetThuc.setCalendar(calNgayKetThuc);
-        
+
         this.jlbNgayBatDau.setText(ngayBatDauConverted);
         this.jlbNgayKetThuc.setText(ngayKetThucConverted);
         this.jlbNgaySua.setText(ngaySuaConverted);
-        this.jlbNgayTao.setText(ngaySuaConverted);
+        this.jlbNgayTao.setText(ngayTaoConverted);
     }
-    
+
     public KhuyenMaiTheoSanPham readForm(String ma) {
         KhuyenMaiTheoSanPham khuyenMaiTheoSanPham = null;
-        
+
         try {
             String ten = this.txtTen.getText();
             Integer giaTri = Integer.valueOf(this.jslGiaTri.getValue());
-            
+
             Calendar ngayKetThucCal = jdcNgayBatDau.getCalendar();
             Calendar ngayBatDauCal = jdcNgayKetThuc.getCalendar();
-            
+
             Long ngayBatDau = ngayBatDauCal.getTimeInMillis() / 1000;
             Long ngayKetThuc = ngayKetThucCal.getTimeInMillis() / 1000;
-            
+
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date()); // Đặt thời gian cho ngày hiện tại
             Long ngayTaoVaSua = cal.getTime().getTime() / 1000;
-            
+
             Boolean trangThai;
             if (this.rdHoatDong.isSelected()) {
                 trangThai = true;
             } else {
                 trangThai = false;
             }
-            
+
             return new KhuyenMaiTheoSanPham(null, ma, ten, giaTri, ngayBatDau, ngayKetThuc, ngayTaoVaSua, ngayTaoVaSua, trangThai);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Đọc file lỗi");
@@ -134,32 +137,35 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             return khuyenMaiTheoSanPham;
         }
     }
-    
+
     public KhuyenMaiTheoSanPhamRequest readFormSearch() {
         KhuyenMaiTheoSanPhamRequest khuyenMaiTheoSanPham = null;
-        
+
         try {
             String input = this.txtTimKiemMaOrTen.getText();
             Integer giaTri = Integer.valueOf(this.jslGiaTriTimKiem.getValue());
-            
-            Calendar ngayKetThucCal = jdcNgayBatDauTimKiem.getCalendar();
-            Calendar ngayBatDauCal = jdcNgayKetThucTimKiem.getCalendar();
-            
+
+            Calendar ngayKetThucCal = jdcNgayKetThucTimKiem.getCalendar();
+            Calendar ngayBatDauCal = jdcNgayBatDauTimKiem.getCalendar();
+
             Long ngayBatDau = null;
             Long ngayKetThuc = null;
-            
+
             if (ngayBatDauCal != null) {
                 ngayBatDau = ngayBatDauCal.getTimeInMillis() / 1000;
-                
             }
+
             if (ngayKetThucCal != null) {
                 ngayKetThuc = ngayKetThucCal.getTimeInMillis() / 1000;
             }
-            
+
+            System.out.println("Ngay Bat Dau: " + ngayBatDau);
+            System.out.println("Ngay Ket Thuc: " + ngayKetThuc);
+
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date()); // Đặt thời gian cho ngày hiện tại
             Long ngayTaoVaSua = cal.getTime().getTime() / 1000;
-            
+
             Boolean trangThai;
             if (this.rdHoatDongTimKiem.isSelected()) {
                 trangThai = true;
@@ -168,7 +174,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             } else {
                 trangThai = false;
             }
-            
+
             return new KhuyenMaiTheoSanPhamRequest(input, giaTri, ngayBatDau, ngayKetThuc, trangThai, ngayTaoVaSua);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Đọc file lỗi");
@@ -176,16 +182,24 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             return khuyenMaiTheoSanPham;
         }
     }
-//    countAllHD();
-//        if (count % 6 == 0) {
-//            soTrang = count / 6;
-//        } else {
-//            soTrang = count / 6 + 1;
-//        }
-//
-//        lblpage.setText("1/" + soTrang);
-//        loadTBHoaDonAll(1);
 
+//    private void updateDataPanel() {
+//        // Xóa dữ liệu cũ từ dataPanel
+//        this.listView.removeAll(listView);
+//
+//        try {
+//            ResultSet resultSet = repo.getData(currentPage);
+//            while (resultSet.next()) {
+//                // Xử lý và hiển thị dữ liệu trên giao diện
+//                String data = resultSet.getString("column_name");
+//                listView.add(new JLabel(data));
+//            }
+////            listView.revalidate();
+////            listView.repaint();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -223,8 +237,8 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDanhSachKhuyenMai = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btnTrai = new javax.swing.JButton();
+        btnPhai = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
         txtTimKiemMaOrTen = new javax.swing.JTextField();
@@ -492,9 +506,19 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
 
         jButton4.setText("<<");
 
-        jButton5.setText("<");
+        btnTrai.setText("<");
+        btnTrai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTraiActionPerformed(evt);
+            }
+        });
 
-        jButton6.setText(">");
+        btnPhai.setText(">");
+        btnPhai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPhaiActionPerformed(evt);
+            }
+        });
 
         jButton7.setText(">>");
 
@@ -575,9 +599,9 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
                         .addGap(271, 271, 271)
                         .addComponent(jButton4)
                         .addGap(104, 104, 104)
-                        .addComponent(jButton5)
+                        .addComponent(btnTrai)
                         .addGap(103, 103, 103)
-                        .addComponent(jButton6)
+                        .addComponent(btnPhai)
                         .addGap(96, 96, 96)
                         .addComponent(jButton7)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -660,8 +684,8 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton4)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6)
+                    .addComponent(btnTrai)
+                    .addComponent(btnPhai)
                     .addComponent(jButton7))
                 .addGap(12, 12, 12))
         );
@@ -700,13 +724,13 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             String ma = this.jlbMa.getText();
             Boolean trangThai;
             if (rdHoatDong.isSelected()) {
-                trangThai = true;
-            } else {
                 trangThai = false;
+            } else {
+                trangThai = true;
             }
             try {
                 this.repo.capNhatTrangThaiKhuyenMaiBangMa(ma, trangThai);
-                this.listView = this.repo.getAllDataKhuyenMai();
+                this.listView = this.repo.getData(currentPage);
                 this.fillTable(this.listView);
                 this.fillTableToForm(ma, this.listView);
                 JOptionPane.showMessageDialog(this, "cập nhật thành công");
@@ -825,7 +849,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             String ma = RandomCodeGenerator.generateCode(4);
             try {
                 this.repo.themKhuyenMai(readForm(ma));
-                this.listView = this.repo.getAllDataKhuyenMai();
+                this.listView = this.repo.getData(currentPage);
                 this.fillTable(listView);
                 this.fillTableToForm(ma, listView);
                 JOptionPane.showMessageDialog(this, "Thêm Thành công");
@@ -843,7 +867,7 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
             String ma = this.jlbMa.getText();
             try {
                 this.repo.suaKhuyenMai(readForm(ma));
-                this.listView = this.repo.getAllDataKhuyenMai();
+                this.listView = this.repo.getData(currentPage);
                 this.fillTable(this.listView);
                 this.fillTableToForm(ma, this.listView);
                 JOptionPane.showMessageDialog(this, "Sửa thành công");
@@ -870,16 +894,44 @@ public class FormQuanLyKhuyenMaiTheoSanPham extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnTimKiemActionPerformed
 
+    private void btnTraiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTraiActionPerformed
+        if (currentPage > 1) {
+            currentPage--;
+            try {
+                this.listView = 
+                this.repo.getData(currentPage);
+                this.fillTable(listView);
+            } catch (Exception ex) {
+                Logger.getLogger(FormQuanLyKhuyenMaiTheoSanPham.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_btnTraiActionPerformed
+
+    private void btnPhaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPhaiActionPerformed
+        try {
+            currentPage++;
+            try {
+                this.listView = 
+                this.repo.getData(currentPage);
+                this.fillTable(listView);
+            } catch (Exception ex) {
+                Logger.getLogger(FormQuanLyKhuyenMaiTheoSanPham.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_btnPhaiActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDonForm;
     private javax.swing.JButton btnDonFormTimKiem;
+    private javax.swing.JButton btnPhai;
     private javax.swing.JButton btnSua;
     private javax.swing.JButton btnThem;
     private javax.swing.JButton btnTimKiem;
+    private javax.swing.JButton btnTrai;
     private javax.swing.JButton btnXoaMem;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;

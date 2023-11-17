@@ -12,9 +12,11 @@ import com.poly.entity.khuyenmai.KhuyenMaiTheoSanPhamRequest;
 import java.sql.Types;
 
 public class KhuyenMaiTheoSanPhamReposirory {
+    
+    private static final int PAGE_SIZE = 10;
 
     public List<KhuyenMaiTheoSanPham> getAllDataKhuyenMai() throws Exception {
-        String query = "SELECT * FROM khuyen_mai ORDER BY thoi_gian_tao DESC ";
+        String query = "SELECT * FROM khuyen_mai ORDER BY thoi_gian_sua DESC ";
         List<KhuyenMaiTheoSanPham> listKhuyenMai = new ArrayList<>();
 
         try (Connection conn = DBConnect.getConnection(); PreparedStatement ps
@@ -40,14 +42,19 @@ public class KhuyenMaiTheoSanPhamReposirory {
         }
         return listKhuyenMai;
     }
+    
+    public List<KhuyenMaiTheoSanPham> getData(int pageNumber) throws Exception {
+        int offset = (pageNumber - 1) * PAGE_SIZE;
 
-    public ArrayList<KhuyenMaiTheoSanPham> getPhanTrang(int trang) {
-        ArrayList<KhuyenMaiTheoSanPham> list = new ArrayList<>();
-        String query = "SELECT TOP 6 * FROM khuyen_mai where MAHD not in (SELECT TOP " + "(? * 6 - 6)"
-                + "ma_khuyen_mai FROM khuyen_mai ORDER BY  DESC) AND (TRANGTHAI=1 OR TRANGTHAI=2) ORDER BY NGAYTAO DESC ";
+        String query = "SELECT * FROM khuyen_mai ORDER BY thoi_gian_sua DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        
+        List<KhuyenMaiTheoSanPham> listKhuyenMai = new ArrayList<>();
+
         try (Connection conn = DBConnect.getConnection(); PreparedStatement ps
                 = conn.prepareStatement(query)) {
-            ps.setInt(1, trang);
+            
+            ps.setInt(1, offset);
+            ps.setInt(2, PAGE_SIZE);
             ps.execute();
             ResultSet rs = ps.getResultSet();
             while (rs.next()) {
@@ -60,36 +67,14 @@ public class KhuyenMaiTheoSanPhamReposirory {
                 Long thoiGianSua = rs.getLong("thoi_gian_sua");
                 Long thoiGianTao = rs.getLong("thoi_gian_tao");
                 Boolean trangThai = rs.getBoolean("trang_thai");
-                list.add(new KhuyenMaiTheoSanPham(id, ma, ten, giaGiam,
+                listKhuyenMai.add(new KhuyenMaiTheoSanPham(id, ma, ten, giaGiam,
                         thoiGianBatDau, thoiGianKetThuc,
                         thoiGianTao, thoiGianSua, trangThai));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
-    }
-
-    public Long countAllHD() throws Exception {
-        String query = "SELECT count(*) From khuyen_mai as trang";
-
-        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.execute();
-
-            ResultSet rs = ps.getResultSet();
-
-            Long count = null;
-
-            while (rs.next()) {
-                count = rs.getLong("trang");
-            }
-
-            return count;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return listKhuyenMai;
     }
 
     public void themKhuyenMai(KhuyenMaiTheoSanPham khuyenMaiTheoSanPham)
@@ -156,23 +141,18 @@ public class KhuyenMaiTheoSanPhamReposirory {
     }
 
     public ArrayList<KhuyenMaiTheoSanPham> timKiemTheoNhieuTruong(KhuyenMaiTheoSanPhamRequest khuyenMaiTheoSanPham) throws Exception {
-
+      
         String query = "SELECT * FROM khuyen_mai WHERE "
-                + "((? IS NULL OR ten_khuyen_mai LIKE ?) " // 2
-                + "OR (? IS NULL OR ma_khuyen_mai LIKE ?)) " // 4
-                + "AND (? IS NULL OR phan_tram_giam_gia = ?) " //6
-                + "AND ("
-                + "(? IS NULL OR ? IS NULL) " // 8
-                + "OR ("
-                + "(? IS NOT NULL AND ? IS NOT NULL) " // 10
-                + "AND (? BETWEEN thoi_gian_bat_dau AND thoi_gian_ket_thuc) " // 11
-                + "AND (? BETWEEN thoi_gian_bat_dau AND thoi_gian_ket_thuc)" // 12
-                + ") OR ("
-                + "(? IS NOT NULL AND ? BETWEEN thoi_gian_bat_dau AND ?) " //15
-                + "AND (? IS NOT NULL AND ? BETWEEN thoi_gian_ket_thuc AND ?) " //18
-                + "AND (thoi_gian_bat_dau <= thoi_gian_ket_thuc)"
-                + ")) AND ( ? IS NULL OR trang_thai = ? ) ORDER BY thoi_gian_tao DESC"; // 19
-
+        + "(((? IS NULL OR ten_khuyen_mai LIKE ?) "
+        + "OR (? IS NULL OR ma_khuyen_mai LIKE ?)) "
+        + "AND (? IS NULL OR phan_tram_giam_gia = ?) "
+        + "AND ("
+        + "(? IS NULL AND ? IS NULL) "
+        + "OR ("
+        + "(? IS NOT NULL AND ? IS NOT NULL AND thoi_gian_bat_dau BETWEEN ? AND ?) "
+        + "AND (? IS NOT NULL AND ? IS NOT NULL AND thoi_gian_ket_thuc BETWEEN ? AND ?)"
+        + ") AND (? IS NULL OR trang_thai = ?)))"
+        + "ORDER BY thoi_gian_sua DESC ";
         ArrayList<KhuyenMaiTheoSanPham> listKhuyenMai = new ArrayList<>();
 
         try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -191,7 +171,7 @@ public class KhuyenMaiTheoSanPhamReposirory {
                 ps.setLong(9, khuyenMaiTheoSanPham.getNgayBatDau());
                 ps.setLong(11, khuyenMaiTheoSanPham.getNgayBatDau());
                 ps.setLong(13, khuyenMaiTheoSanPham.getNgayBatDau());
-                ps.setLong(14, khuyenMaiTheoSanPham.getNgayBatDau());
+                ps.setLong(15, khuyenMaiTheoSanPham.getNgayBatDau());
             } else {
                 // Đặt các giá trị mặc định hoặc xử lý khác khi ngày bắt đầu là null
                 // Ví dụ:
@@ -199,7 +179,6 @@ public class KhuyenMaiTheoSanPhamReposirory {
                 ps.setNull(9, Types.BIGINT);
                 ps.setNull(11, Types.BIGINT);
                 ps.setNull(13, Types.BIGINT);
-                ps.setNull(14, Types.BIGINT);
                 ps.setNull(15, Types.BIGINT);
             }
 
@@ -207,25 +186,23 @@ public class KhuyenMaiTheoSanPhamReposirory {
                 ps.setLong(8, khuyenMaiTheoSanPham.getNgayKetThuc());
                 ps.setLong(10, khuyenMaiTheoSanPham.getNgayKetThuc());
                 ps.setLong(12, khuyenMaiTheoSanPham.getNgayKetThuc());
+                ps.setLong(14, khuyenMaiTheoSanPham.getNgayKetThuc());
                 ps.setLong(16, khuyenMaiTheoSanPham.getNgayKetThuc());
-                ps.setLong(17, khuyenMaiTheoSanPham.getNgayKetThuc());
-
+                
             } else {
                 ps.setNull(8, Types.BIGINT);
                 ps.setNull(10, Types.BIGINT);
                 ps.setNull(12, Types.BIGINT);
+                ps.setNull(14, Types.BIGINT);
                 ps.setNull(16, Types.BIGINT);
-                ps.setNull(17, Types.BIGINT);
             }
 
-            ps.setLong(15, khuyenMaiTheoSanPham.getThoiDiemHienTai());
-            ps.setLong(18, khuyenMaiTheoSanPham.getThoiDiemHienTai());
             if (khuyenMaiTheoSanPham.getTrangThai() != null) {
-                ps.setBoolean(19, khuyenMaiTheoSanPham.getTrangThai());
-                ps.setBoolean(20, khuyenMaiTheoSanPham.getTrangThai());
+                ps.setBoolean(17, khuyenMaiTheoSanPham.getTrangThai());
+                ps.setBoolean(18, khuyenMaiTheoSanPham.getTrangThai());
             } else {
-                ps.setNull(19, Types.BOOLEAN);
-                ps.setNull(20, Types.BOOLEAN);
+                ps.setNull(17, Types.BOOLEAN);
+                ps.setNull(18, Types.BOOLEAN);
             }
             ps.execute();
 
