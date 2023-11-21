@@ -23,15 +23,15 @@ import com.poly.form.doihang.FormQuanLyDoiHangItem2;
 import com.poly.form.giaohang.FormQuanLyGiaoHang;
 import com.poly.form.giaohang.FormQuanLyGiaoHangItem1;
 import com.poly.form.giaohang.FormQuanLyGiaoHangItem2;
-import com.poly.form.khachhang.FormQuanLyKhachHang;
+//import com.poly.form.khachhang.FormQuanLyKhachHang;
 import com.poly.form.khuyenmai.FormQuanLyKhuyenMai;
-import com.poly.form.khuyenmai.FormQuanLyKhuyenMaiTheoSanPham;
+import com.poly.form.khuyenmai.khuyenmai_sanpham.form.FormQuanLyKhuyenMaiTheoSanPham;
 import com.poly.form.nhanvien.FormQuanLyNhanVien;
 import com.poly.form.hoadon.FormQuanLyHoaDon;
 import com.poly.form.hoadon.FormQuanLyHoaDonItem1;
 import com.poly.form.hoadon.FormQuanLyHoaDonItem2;
-import com.poly.form.khachhang.FormCaiDaiMail;
-import com.poly.form.khachhang.FormQuanLyKhachHangDaXoa;
+//import com.poly.form.khachhang.FormCaiDaiMail;
+//import com.poly.form.khachhang.FormQuanLyKhachHangDaXoa;
 import com.poly.form.khuyenmai.FormQuanLyKhuyenMaiItem1;
 import com.poly.form.khuyenmai.FormQuanLyKhuyenMaiItem2;
 import com.poly.form.nhanvien.FormQuanLyNhanVienItem1;
@@ -100,7 +100,6 @@ public class MainForm extends JLayeredPane {
             // các element muốn dùng + build lại dự án rồi chay (các file ko còn cái icon cờ lê nữa :)))
             if (index == 0) {
                 Application.showForm(new FormDashboard());
-
             } else if (index == 1) { // tương ứng với menu (Quản lý sản phẩm)
                 if (subIndex == 1) { // tương ứng với menu item của (Quản lý sản phẩm)
                     Application.showForm(new FormQuanLySanPham());
@@ -136,13 +135,13 @@ public class MainForm extends JLayeredPane {
                     Application.showForm(new FormQuanLyNhanVienItem2());
                 }
             } else if (index == 5) {
-                if (subIndex == 1) {
-                    Application.showForm(new FormQuanLyKhachHang());
-                } else if (subIndex == 2) {
-                    Application.showForm(new FormQuanLyKhachHangDaXoa());
-                } else if (subIndex == 3) {
-                    Application.showForm(new FormCaiDaiMail(null));
-                }
+//                if (subIndex == 1) {
+//                    Application.showForm(new FormQuanLyKhachHang());
+//                } else if (subIndex == 2) {
+//                    Application.showForm(new FormQuanLyKhachHangDaXoa());
+//                } else if (subIndex == 3) {
+//                    Application.showForm(new FormCaiDaiMail(null));
+//                }
             } else if (index == 6) {
                 if (subIndex == 1) {
                     Application.showForm(new FormQuanLyKhuyenMai());
@@ -162,6 +161,7 @@ public class MainForm extends JLayeredPane {
                     Application.showForm(new FormQuanLyGiaoHangItem2());
                 }
             } else if (index == 9) {
+                System.exit(0);
 //                Application.logout();
             } else {
                 action.cancel();

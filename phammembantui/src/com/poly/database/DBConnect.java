@@ -12,7 +12,7 @@ public class DBConnect {
     private static final String PASSWORD = "123456";
     private static final String SERVER = "localhost";
     private static final String PORT = "1433";
-    private static final String DATABASE_NAME = "DB_phanmembantui";
+    private static final String DATABASE_NAME = "DB_PHANMENBANTUI_CHUAN";
     private static final boolean USING_SSL = false;
 
     private static String CONNECT_STRING;

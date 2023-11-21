@@ -11,13 +11,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import com.poly.form.LoginForm;
 import com.poly.form.MainForm;
+import java.awt.ComponentOrientation;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import raven.toast.Notifications;
 
 /**
  *
  * @author Raven
  */
-public class Application extends javax.swing.JFrame {
+public class Application extends javax.swing.JFrame{
 
     private static Application app;
     private final MainForm mainForm;
@@ -87,7 +90,7 @@ public class Application extends javax.swing.JFrame {
         FlatMacDarkLaf.setup();
         java.awt.EventQueue.invokeLater(() -> {
             app = new Application();
-            //  app.applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+              app.applyComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
             app.setVisible(true);
         });
     }
